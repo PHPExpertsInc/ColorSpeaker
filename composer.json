@@ -1,6 +1,6 @@
 {
     "name": "phpexperts/color-speaker",
-    "description": "A PHP implementation of https://stitcher.io/blog/tests-and-types. A demo of SimpleDTO.",
+    "description": "An easy-to-use converter for different types of color models.",
     "type": "library",
     "keywords": [
         "rgb colors",

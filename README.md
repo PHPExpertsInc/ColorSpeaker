@@ -1,24 +1,19 @@
-# Standard Skeleton Project
+# ColorSpeaker
 
-[![TravisCI](https://travis-ci.org/phpexpertsinc/skeleton.svg?branch=master)](https://travis-ci.org/phpexpertsinc/skeleton)
-[![Maintainability](https://api.codeclimate.com/v1/badges/503cba0c53eb262c947a/maintainability)](https://codeclimate.com/github/phpexpertsinc/SimpleDTO/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/503cba0c53eb262c947a/test_coverage)](https://codeclimate.com/github/phpexpertsinc/SimpleDTO/test_coverage)
+[![Travis CI](https://travis-ci.org/phpexpertsinc/ColorSpeaker.svg?branch=master)](https://travis-ci.org/phpexpertsinc/ColorSpeaker)[![Maintainability](https://api.codeclimate.com/v1/badges/503cba0c53eb262c947a/maintainability)](https://codeclimate.com/github/phpexpertsinc/SimpleDTO/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/1dff9e08f54516c41e4d/maintainability)](https://codeclimate.com/github/phpexpertsinc/ColorSpeaker/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/1dff9e08f54516c41e4d/test_coverage)](https://codeclimate.com/github/phpexpertsinc/ColorSpeaker/test_coverage)
 
-Skeleton Project is a PHP Experts, Inc., Project meant to ease the creation of new projects.
+ColorSpeaker is a PHP Experts, Inc., Project is an easy-to-use converter for different types of color models.
 
-It strives to conform to the Standard PHP Skeleton (https://github.com/php-pds/skeleton) wherever possible.
-
-Read [**On Structuring PHP Projects**](https://blog.nikolaposa.in.rs/2017/01/16/on-structuring-php-projects/)
-for more.
-
-The configurer was inspired by https://www.binpress.com/building-project-skeletons-composer/
+It aims to support all major color models: RGB, CSS hex codes, HSL and HSV.
 
 ## Installation
 
 Via Composer
 
 ```bash
-composer create-project phpexperts/skeleton NewProject
+composer require phpexperts/color-speaker
 ```
 
 ## Usage
