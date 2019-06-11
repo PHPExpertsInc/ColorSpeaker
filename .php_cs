@@ -1,7 +1,7 @@
 <?php
 
 $header = <<<HEADER
-This file is part of RGBSpeaker, a PHP Experts, Inc., Project.
+This file is part of ColorSpeaker, a PHP Experts, Inc., Project.
 
 Copyright © 2019 PHP Experts, Inc.
 Author: Theodore R. Smith <theodore@phpexperts.pro>
