@@ -18,17 +18,52 @@ composer require phpexperts/color-speaker
 
 ## Usage
 
-Install a project, then remove the directories you won't need, like `bin`.
+Initialize it with 3 standard RGB integers:
+```php
+$rgb = new RGBSpeaker(123, 111, 55);
+```
+It can easily be used as a string for css-compatible output:
+```php
+$csv = ".box { background-color: $rgb; }";
+// .box { background-color: rgb(123, 111,55); }
+```
+You can also fetch the RGBColor directly:
+```php
+$rgbColor = $rgb->toRGB();
+/*
+   SimpleDTO => {
+       'red'   => 123,
+       'green' => 111,
+       'blue'  => 55
+   };
+*/
+```
+See the [**SimpleDTO Project**](https://github.com/phpexpertsinc/simple-dto) for more.
 
-You should definitely edit the LICENSE and .travis.yml to be specific to your 
-project and update the tags at the top of the README.md.
+You can also export to different color formats:
+```php
+$hexcode = $rgb->toHex();
+// #7B6F37
+
+// You can also make the hex code lowercase:
+$hexcode = $rgb->toHex(false);
+// #7b6f37
+```
 
 # Use cases
 
- ✔ Rapidly start up a project right.  
- ✔ Less time spent on boilerplating a git repo.  
- ✔ Conforms to the most widely-deployed PHP layout.  
- ✔ Fully compatible with the Bettergist Collective recommendation.  
+PHPExperts\ColorSpeaker\RGBColor  
+ ✔ Will only accept integers between 0 and 255, inclusive  
+ ✔ Will only accept literal integers  
+ ✔ Can be constructed with a zero-indexed array  
+ ✔ Can be outputted as a CSS string
+
+PHPExperts\ColorSpeaker\RGBSpeaker  
+ ✔ Can be constructed from an RGB Color  
+ ✔ Will only accept integers between 0 and 255, inclusive  
+ ✔ Can return its RGBDTO  
+ ✔ Can be outputted as a CSS string  
+ ✔ Can be converted to hex code
 
 ## Testing
 
@@ -45,4 +80,3 @@ CEO: PHP Experts, Inc.
 ## License
 
 MIT license. Please see the [license file](LICENSE) for more information.
-
