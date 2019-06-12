@@ -15,14 +15,14 @@
  *                   http://archive.is/99WyU
  */
 
-namespace PHPExperts\ColorSpeaker\Tests;
+namespace PHPExperts\ColorSpeaker\Tests\DTOs;
 
 use PHPExperts\DataTypeValidator\InvalidDataTypeException;
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
 use PHPExperts\SimpleDTO\SimpleDTO;
 use PHPUnit\Framework\TestCase;
 
-/** @testdox PHPExperts\ColorSpeaker\RGBColor */
+/** @testdox PHPExperts\ColorSpeaker\DTOs\RGBColor */
 class RGBColorTest extends TestCase
 {
     /** @testdox Will only accept integers between 0 and 255, inclusive */
@@ -39,8 +39,8 @@ class RGBColorTest extends TestCase
             $this->fail('Created an invalid DTO.');
         } catch (InvalidDataTypeException $e) {
             $expected = [
-                'red'  => 'Must be greater than or equal to 0',
-                'blue' => 'Must be lesser than or equal to 255',
+                'red'  => 'Must be greater than or equal to 0, not -1',
+                'blue' => 'Must be lesser than or equal to 255, not 256',
             ];
 
             self::assertSame('Color values must be between 0 and 255, inclusive.', $e->getMessage());
