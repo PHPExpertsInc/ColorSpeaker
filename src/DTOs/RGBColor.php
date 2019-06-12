@@ -25,7 +25,7 @@ use PHPExperts\SimpleDTO\SimpleDTO;
  * @property-read int $green
  * @property-read int $blue
  */
-final class RGBColor extends SimpleDTO
+final class RGBColor extends SimpleDTO implements Color
 {
     use MinMax;
 

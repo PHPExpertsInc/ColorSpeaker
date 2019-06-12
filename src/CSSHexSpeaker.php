@@ -20,14 +20,14 @@ namespace PHPExperts\ColorSpeaker;
 use PHPExperts\ColorSpeaker\DTOs\CSSHexColor;
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
 
-final class RGBSpeaker implements ColorSpeakerContract
+final class CSSHexSpeaker implements ColorSpeakerContract
 {
-    /** @var RGBColor */
+    /** @var CSSHexColor */
     private $color;
 
-    public function __construct(RGBColor $rgbColor)
+    public function __construct(CSSHexColor $hexColor)
     {
-        $this->color = $rgbColor;
+        $this->color = $hexColor;
     }
 
     /**
@@ -35,25 +35,25 @@ final class RGBSpeaker implements ColorSpeakerContract
      * @param int $green
      * @param int $blue
      *
-     * @return RGBSpeaker
+     * @return CSSHexSpeaker
      */
     public static function fromRGB(int $red, int $green, int $blue): ColorSpeakerContract
     {
-        $rgbColor = new RGBColor(['red' => $red, 'blue' => $blue, 'green' => $green]);
+        $rgbColor = new RGBColor([$red, $green, $blue]);
+        $hex = sprintf('#%02x%02x%02x', $rgbColor->red, $rgbColor->green, $rgbColor->blue);
+        $hex = strtoupper($hex);
 
-        return new self($rgbColor);
+        return new CSSHexSpeaker(new CSSHexColor($hex));
     }
 
     /**
      * @param string $hex
      *
-     * @return RGBSpeaker
+     * @return CSSHexSpeaker
      */
     public static function fromHexCode(string $hex): ColorSpeakerContract
     {
-        $rgbColor = CSSHexSpeaker::fromHexCode($hex)->toRGB();
-
-        return new self($rgbColor);
+        return new self(new CSSHexColor($hex));
     }
 
     public function __toString(): string
@@ -63,13 +63,27 @@ final class RGBSpeaker implements ColorSpeakerContract
 
     public function toRGB(): RGBColor
     {
-        return $this->color;
+        return $this->convertToRGB();
     }
 
     public function toHexCode(): CSSHexColor
     {
-        $rgbColor = $this->color;
+        return $this->color;
+    }
 
-        return CSSHexSpeaker::fromRGB($rgbColor->red, $rgbColor->green, $rgbColor->blue)->toHexCode();
+    /**
+     * Taken from https://stackoverflow.com/a/15202130/430062.
+     *
+     * @return RGBColor
+     */
+    private function convertToRGB(): RGBColor
+    {
+        // Now *THIS* is some arcane PHP!
+        $hex = (string) $this->color;
+        strlen($hex) === 4
+            ? [$r, $g, $b] = sscanf($hex, '#%1x%1x%1x')
+            : [$r, $g, $b] = sscanf($hex, '#%2x%2x%2x');
+
+        return new RGBColor([$r, $g, $b]);
     }
 }
