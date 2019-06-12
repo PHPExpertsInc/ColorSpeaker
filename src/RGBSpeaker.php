@@ -19,44 +19,55 @@ namespace PHPExperts\ColorSpeaker;
 
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
 
-class RGBSpeaker
+final class RGBSpeaker implements ColorSpeakerContract
 {
     /** @var RGBColor */
-    private $rgbColor;
+    private $color;
 
-    public function __construct($red, $green, $blue)
+    public function __construct(RGBColor $rgbColor)
     {
-        $this->rgbColor = new RGBColor(['red' => $red, 'blue' => $blue, 'green' => $green]);
+        $this->color = $rgbColor;
     }
 
-    public static function fromRGB(RGBColor $rgbColor): self
+    /**
+     * @param int $red
+     * @param int $green
+     * @param int $blue
+     * @return RGBSpeaker
+     */
+    public static function fromRGB(int $red, int $green, int $blue): ColorSpeakerContract
     {
-        return new self($rgbColor->red, $rgbColor->green, $rgbColor->blue);
+        $rgbColor = new RGBColor(['red' => $red, 'blue' => $blue, 'green' => $green]);
+
+        return new self($rgbColor);
+    }
+
+    /**
+     * @param string $hex
+     * @return RGBSpeaker
+     */
+    public static function fromHexCode(string $hex): ColorSpeakerContract
+    {
+        $rgbColor = HexSpeaker::fromHexCode($hex)->toRGB();
+
+        return new self($rgbColor);
     }
 
     public function __toString(): string
     {
-        return $this->rgbColor->__toString();
+        return $this->color->__toString();
     }
 
     public function toRGB(): RGBColor
     {
-        return $this->rgbColor;
+        return $this->color;
     }
 
-    /**
-     * Taken from https://stackoverflow.com/a/32977705/430062.
-     *
-     * @param bool $uppercase
-     *
-     * @return string
-     */
-    public function toHex(bool $uppercase = true): string
+    public function toHexCode(): string
     {
-        $hex = sprintf('#%02x%02x%02x', $this->rgbColor->red, $this->rgbColor->green, $this->rgbColor->blue);
-        if ($uppercase === true) {
-            $hex = strtoupper($hex);
-        }
+        $rgbColor = $this->color;
+        $hex = sprintf('#%02x%02x%02x', $rgbColor->red, $rgbColor->green, $rgbColor->blue);
+        $hex = strtoupper($hex);
 
         return $hex;
     }

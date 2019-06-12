@@ -29,8 +29,8 @@ class RGBSpeakerTest extends TestCase
     public function testCanBeConstructedFromAnRGBColor()
     {
         $rgbColor = new RGBColor([0, 0, 255]);
-        $expected = new RGBSpeaker(0, 0, 255);
-        $actual = RGBSpeaker::fromRGB($rgbColor);
+        $expected = new RGBSpeaker($rgbColor);
+        $actual = RGBSpeaker::fromRGB(0, 0, 255);
 
         self::assertEquals($expected, $actual);
     }
@@ -38,11 +38,11 @@ class RGBSpeakerTest extends TestCase
     /** @testdox Will only accept integers between 0 and 255, inclusive */
     public function testWillOnlyAcceptIntegersBetween0And255Inclusive()
     {
-        $rgb = new RGBSpeaker(0, 0, 255);
+        $rgb = new RGBSpeaker(new RGBColor([0, 0, 255]));
         self::assertInstanceOf(RGBSpeaker::class, $rgb);
 
         try {
-            new RGBSpeaker(-1, 5, 256);
+            new RGBSpeaker(new RGBColor([-1, 5, 256]));
             $this->fail('Created an invalid DTO.');
         } catch (InvalidDataTypeException $e) {
             $expected = [
@@ -59,7 +59,7 @@ class RGBSpeakerTest extends TestCase
     public function testCanReturnItsRGBDTO()
     {
         $expectedDTO = new RGBColor(['red' => 1, 'green' => 1, 'blue' => 1]);
-        $rgb = new RGBSpeaker(1, 1, 1);
+        $rgb = new RGBSpeaker(new RGBColor([1, 1, 1]));
         self::assertEquals($expectedDTO, $rgb->toRGB());
     }
 
@@ -67,7 +67,7 @@ class RGBSpeakerTest extends TestCase
     public function testCanBeOutputtedAsACSSString()
     {
         $expected = 'rgb(127, 127, 127)';
-        $rgb = new RGBSpeaker(127, 127, 127);
+        $rgb = new RGBSpeaker(new RGBColor([127, 127, 127]));
         self::assertEquals($expected, (string) $rgb);
     }
 
@@ -82,8 +82,8 @@ class RGBSpeakerTest extends TestCase
         ];
 
         foreach ($rgbHexPairs as $expected => $rgbDTO) {
-            $rgb = RGBSpeaker::fromRGB($rgbDTO);
-            self::assertSame($expected, $rgb->toHex());
+            $rgb = new RGBSpeaker($rgbDTO);
+            self::assertEquals($expected, $rgb->toHexCode());
         }
     }
 }
