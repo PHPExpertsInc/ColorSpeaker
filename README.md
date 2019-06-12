@@ -52,18 +52,33 @@ $hexcode = $rgb->toHex(false);
 
 # Use cases
 
-PHPExperts\ColorSpeaker\RGBColor  
+PHPExperts\ColorSpeaker\DTOs\RGBColor  
  ✔ Will only accept integers between 0 and 255, inclusive  
  ✔ Will only accept literal integers  
  ✔ Can be constructed with a zero-indexed array  
- ✔ Can be outputted as a CSS string
+ ✔ Can be outputted as a CSS string  
 
 PHPExperts\ColorSpeaker\RGBSpeaker  
- ✔ Can be constructed from an RGB Color  
+ ✔ Can be constructed from an RGBColor  
+ ✔ Can be constructed from a HexColor  
  ✔ Will only accept integers between 0 and 255, inclusive  
- ✔ Can return its RGBDTO  
+ ✔ Can return an RGBColor  
+ ✔ Can return a CSSHexColor  
  ✔ Can be outputted as a CSS string  
- ✔ Can be converted to hex code
+
+PHPExperts\ColorSpeaker\DTOs\CSSHexColor  
+ ✔ Can assert if a string is a valid CSS hex color  
+ ✔ The hex code must start with a "#" sign  
+ ✔ Will only accept three digit and six digit hex codes  
+ ✔ Can be outputted as a CSS string  
+
+PHPExperts\ColorSpeaker\CSSHexSpeaker  
+ ✔ Can be constructed from an RGB Color  
+ ✔ Can be constructed from a HexColor  
+ ✔ Can return an RGBColor  
+ ✔ Can return a CSSHexColor  
+ ✔ Can be outputted as a CSS string  
+
 
 ## Testing
 
