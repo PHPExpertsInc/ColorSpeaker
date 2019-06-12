@@ -17,6 +17,7 @@
 
 namespace PHPExperts\ColorSpeaker;
 
+use PHPExperts\ColorSpeaker\DTOs\CSSHexColor;
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
 
 interface ColorSpeakerContract
@@ -29,5 +30,5 @@ interface ColorSpeakerContract
 
     public function toRGB(): RGBColor;
 
-    public function toHexCode(): string;
+    public function toHexCode(): CSSHexColor;
 }

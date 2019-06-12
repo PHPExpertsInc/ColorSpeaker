@@ -26,9 +26,9 @@ trait MinMax
         $reasons = [];
         foreach ($input as $color => $value) {
             if ($value < static::MY_MIN) {
-                $reasons[$color] = sprintf('Must be greater than or equal to %s', static::MY_MIN);
+                $reasons[$color] = sprintf('Must be greater than or equal to %s, not %d', static::MY_MIN, $value);
             } elseif ($value > static::MY_MAX) {
-                $reasons[$color] = sprintf('Must be lesser than or equal to %s', static::MY_MAX);
+                $reasons[$color] = sprintf('Must be lesser than or equal to %s, not %d', static::MY_MAX, $value);
             }
         }
 

@@ -17,6 +17,7 @@
 
 namespace PHPExperts\ColorSpeaker\Tests;
 
+use PHPExperts\ColorSpeaker\DTOs\CSSHexColor;
 use PHPExperts\DataTypeValidator\InvalidDataTypeException;
 use PHPExperts\ColorSpeaker\RGBSpeaker;
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
@@ -25,7 +26,7 @@ use PHPUnit\Framework\TestCase;
 /** @testdox PHPExperts\ColorSpeaker\RGBSpeaker */
 class RGBSpeakerTest extends TestCase
 {
-    /** @testdox Can be constructed from an RGB Color */
+    /** @testdox Can be constructed from an RGBColor */
     public function testCanBeConstructedFromAnRGBColor()
     {
         $rgbColor = new RGBColor([0, 0, 255]);
@@ -34,6 +35,17 @@ class RGBSpeakerTest extends TestCase
 
         self::assertEquals($expected, $actual);
     }
+
+    /** @testdox Can be constructed from a HexColor */
+    public function testCanBeConstructedFromAHexColor()
+    {
+        $rgbColor = new RGBColor([18, 52, 86]);
+        $expected = new RGBSpeaker($rgbColor);
+        $actual = RGBSpeaker::fromHexCode('#123456');
+
+        self::assertEquals($expected, $actual);
+    }
+
 
     /** @testdox Will only accept integers between 0 and 255, inclusive */
     public function testWillOnlyAcceptIntegersBetween0And255Inclusive()
@@ -46,8 +58,8 @@ class RGBSpeakerTest extends TestCase
             $this->fail('Created an invalid DTO.');
         } catch (InvalidDataTypeException $e) {
             $expected = [
-                'red'  => 'Must be greater than or equal to 0',
-                'blue' => 'Must be lesser than or equal to 255',
+                'red'  => 'Must be greater than or equal to 0, not -1',
+                'blue' => 'Must be lesser than or equal to 255, not 256',
             ];
 
             self::assertSame('Color values must be between 0 and 255, inclusive.', $e->getMessage());
@@ -55,12 +67,33 @@ class RGBSpeakerTest extends TestCase
         }
     }
 
-    /** @testdox Can return its RGBDTO */
-    public function testCanReturnItsRGBDTO()
+    /** @testdox Can return its RGBColor */
+    public function testCanReturnAnRGBColor()
     {
         $expectedDTO = new RGBColor(['red' => 1, 'green' => 1, 'blue' => 1]);
         $rgb = new RGBSpeaker(new RGBColor([1, 1, 1]));
         self::assertEquals($expectedDTO, $rgb->toRGB());
+    }
+
+    /** @testdox Can return a CSSHexColor */
+    public function testCanReturnACSSHexColor()
+    {
+        $rgbHexPairs = [
+            '#123456' => new RGBColor([ 18,  52,  86]),
+            '#803737' => new RGBColor([128,  55,  55]),
+            '#374F80' => new RGBColor([ 55,  79, 128]),
+            '#398037' => new RGBColor([ 57, 128,  55]),
+            '#09EC01' => new RGBColor([  9, 236,   1]),
+            '#000099' => new RGBColor([  0,   0, 153]),
+        ];
+
+        foreach ($rgbHexPairs as $expected => $rgbDTO) {
+            $rgb = new RGBSpeaker($rgbDTO);
+            self::assertEquals($expected, $rgb->toHexCode());
+
+            $expectedHexColor = new CSSHexColor($expected);
+            self::assertEquals($expectedHexColor, $rgb->toHexCode());
+        }
     }
 
     /** @testdox Can be outputted as a CSS string */
@@ -69,21 +102,5 @@ class RGBSpeakerTest extends TestCase
         $expected = 'rgb(127, 127, 127)';
         $rgb = new RGBSpeaker(new RGBColor([127, 127, 127]));
         self::assertEquals($expected, (string) $rgb);
-    }
-
-    public function testCanBeConvertedToHexCode()
-    {
-        $rgbHexPairs = [
-            '#803737' => new RGBColor([128,  55, 55]),
-            '#374F80' => new RGBColor([55,  79, 128]),
-            '#398037' => new RGBColor([57, 128,  55]),
-            '#09EC01' => new RGBColor([9, 236,   1]),
-            '#000099' => new RGBColor([0,   0, 153]),
-        ];
-
-        foreach ($rgbHexPairs as $expected => $rgbDTO) {
-            $rgb = new RGBSpeaker($rgbDTO);
-            self::assertEquals($expected, $rgb->toHexCode());
-        }
     }
 }
