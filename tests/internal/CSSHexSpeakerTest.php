@@ -66,7 +66,7 @@ class CSSHexSpeakerTest extends TestCase
     /** @testdox Can return an RGBColor */
     public function testCanReturnAnRGBColor()
     {
-        $expectedDTO = new RGBColor([18, 52,86]);
+        $expectedDTO = new RGBColor([18, 52, 86]);
         $hex = new CSSHexSpeaker(new CSSHexColor('#123456'));
         self::assertEquals($expectedDTO, $hex->toRGB());
 

@@ -56,7 +56,6 @@ class ColorSpeakerTest extends TestCase
         self::assertEquals($hexColor, $actual->getTranslator()->toHexCode());
     }
 
-
     /** @testdox From RGB: Will only accept integers between 0 and 255, inclusive */
     public function testWillOnlyAcceptIntegersBetween0And255Inclusive()
     {

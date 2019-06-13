@@ -46,7 +46,6 @@ class RGBSpeakerTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-
     /** @testdox Will only accept integers between 0 and 255, inclusive */
     public function testWillOnlyAcceptIntegersBetween0And255Inclusive()
     {
