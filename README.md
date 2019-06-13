@@ -21,7 +21,7 @@ composer require phpexperts/color-speaker
 Initialize it with 3 standard RGB integers:
 ```php
 $rgbSpeaker = ColorSpeaker::fromRGB(123, 111, 55);
-$hexSpeaker = ColorSpeaker::fromRGB(123, 111, 55);
+$hexSpeaker = ColorSpeaker::fromHexCode('#7B6F37');
 ```
 It can easily be used as a string for css-compatible output:
 ```php

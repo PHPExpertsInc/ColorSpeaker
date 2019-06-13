@@ -33,6 +33,12 @@ class ReadMeTest extends TestCase
         $csv = ".box { background-color: $rgbSpeaker; }";
 
         self::assertEquals($expected, $csv);
+        
+        $hexSpeaker = ColorSpeaker::fromHexCode('#7B6F37');
+        $expected = '.box { background-color: #7B6F37; }';
+        $csvHex = ".box { background-color: $hexSpeaker; }";
+
+        self::assertEquals($expected, $csvHex);
     }
 
     public function testExample2()
