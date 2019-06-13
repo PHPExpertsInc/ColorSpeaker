@@ -25,8 +25,8 @@ $hexSpeaker = ColorSpeaker::fromRGB(123, 111, 55);
 ```
 It can easily be used as a string for css-compatible output:
 ```php
-$csv = ".box { background-color: $rgb; }";
-// .box { background-color: rgb(123, 111,55); }
+$csv = ".box { background-color: $rgbSpeaker; }";
+// .box { background-color: rgb(123, 111, 55); }
 $csvHex = ".box { background-color: $hexSpeaker; }";
 // .box { background-color: #7B6F37; }
 ```
@@ -34,7 +34,7 @@ You can also fetch the RGBColor and the HexColor directly:
 ```php
 $rgbColor = $rgbSpeaker->toRGB();
 /*
-   (string) $rgbColor === rgb(123, 11, 55);
+   (string) $rgbColor === rgb(123, 111, 55);
 
    SimpleDTO => {
        'red'   => 123,
@@ -61,6 +61,8 @@ $hexColor = $rgbSpeaker->toHexCode();
 All colors serializable and easily converted to JSON objects:
 
 ```php
+$linguist = ColorSpeaker::fromHexCode('#7B6F37');
+$rgbColor = $linguist->toRGB();
 echo json_encode($rgbColor, JSON_PRETTY_PRINT);
 /**
 {
