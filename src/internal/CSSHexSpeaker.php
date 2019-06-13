@@ -15,11 +15,12 @@
  *                   http://archive.is/99WyU
  */
 
-namespace PHPExperts\ColorSpeaker;
+namespace PHPExperts\ColorSpeaker\internal;
 
 use PHPExperts\ColorSpeaker\DTOs\CSSHexColor;
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
 
+/** @internal */
 final class CSSHexSpeaker implements ColorSpeakerContract
 {
     /** @var CSSHexColor */
@@ -80,9 +81,10 @@ final class CSSHexSpeaker implements ColorSpeakerContract
     {
         // Now *THIS* is some arcane PHP!
         $hex = (string) $this->color;
-        strlen($hex) === 4
-            ? [$r, $g, $b] = sscanf($hex, '#%1x%1x%1x')
-            : [$r, $g, $b] = sscanf($hex, '#%2x%2x%2x');
+        // @todo Please, if you know of a better way to do this, I'd love a PR!
+        $hex = strlen($hex) === 4 ? "#$hex[1]$hex[1]$hex[2]$hex[2]$hex[3]$hex[3]" : $hex;
+
+        [$r, $g, $b] = sscanf($hex, '#%2x%2x%2x');
 
         return new RGBColor([$r, $g, $b]);
     }

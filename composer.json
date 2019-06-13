@@ -18,6 +18,7 @@
     ],
     "require": {
         "php": ">=7.1",
+        "ext-json": "*",
         "phpexperts/simple-dto": "^2.3"
     },
     "require-dev": {
@@ -33,6 +34,11 @@
     "autoload": {
         "psr-4": {
             "PHPExperts\\ColorSpeaker\\" : "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PHPExperts\\ColorSpeaker\\Tests\\" : "tests/"
         }
     },
     "config": {

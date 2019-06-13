@@ -15,10 +15,10 @@
  *                   http://archive.is/99WyU
  */
 
-namespace PHPExperts\ColorSpeaker\Tests;
+namespace PHPExperts\ColorSpeaker\Tests\internal;
 
-use PHPExperts\ColorSpeaker\CSSHexSpeaker;
 use PHPExperts\ColorSpeaker\DTOs\CSSHexColor;
+use PHPExperts\ColorSpeaker\internal\CSSHexSpeaker;
 use PHPExperts\DataTypeValidator\InvalidDataTypeException;
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
 use PHPUnit\Framework\TestCase;
@@ -49,6 +49,16 @@ class CSSHexSpeakerTest extends TestCase
         $hexColor = new CSSHexColor('#123456');
         $expected = new CSSHexSpeaker($hexColor);
         $actual = CSSHexSpeaker::fromHexCode('#123456');
+
+        self::assertEquals($expected, $actual);
+    }
+
+    public function testWillWorkWithShortHexColorCodes()
+    {
+        $hexColor = new CSSHexColor('#CCC');
+        $expected = new CSSHexSpeaker($hexColor);
+        $actual = CSSHexSpeaker::fromHexCode('#CCC');
+        $rgbColor = $actual->toRGB();
 
         self::assertEquals($expected, $actual);
     }

@@ -15,11 +15,11 @@
  *                   http://archive.is/99WyU
  */
 
-namespace PHPExperts\ColorSpeaker\Tests;
+namespace PHPExperts\ColorSpeaker\Tests\internal;
 
 use PHPExperts\ColorSpeaker\DTOs\CSSHexColor;
+use PHPExperts\ColorSpeaker\internal\RGBSpeaker;
 use PHPExperts\DataTypeValidator\InvalidDataTypeException;
-use PHPExperts\ColorSpeaker\RGBSpeaker;
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
 use PHPUnit\Framework\TestCase;
 

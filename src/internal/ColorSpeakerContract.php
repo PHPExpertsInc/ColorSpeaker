@@ -15,10 +15,21 @@
  *                   http://archive.is/99WyU
  */
 
-namespace PHPExperts\skeleton\Tests;
+namespace PHPExperts\ColorSpeaker\internal;
 
-use PHPUnit\Framework\TestCase as BaseTestCase;
+use PHPExperts\ColorSpeaker\DTOs\CSSHexColor;
+use PHPExperts\ColorSpeaker\DTOs\RGBColor;
 
-abstract class TestCase extends BaseTestCase
+/** @internal */
+interface ColorSpeakerContract
 {
+    public static function fromRGB(int $red, int $green, int $blue): self;
+
+    public static function fromHexCode(string $hexColor): self;
+
+    public function __toString(): string;
+
+    public function toRGB(): RGBColor;
+
+    public function toHexCode(): CSSHexColor;
 }
