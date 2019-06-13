@@ -18,18 +18,19 @@
 namespace PHPExperts\ColorSpeaker\internal;
 
 use PHPExperts\ColorSpeaker\DTOs\CSSHexColor;
+use PHPExperts\ColorSpeaker\DTOs\HSLColor;
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
 
 /** @internal */
 interface ColorSpeakerContract
 {
     public static function fromRGB(int $red, int $green, int $blue): self;
-
     public static function fromHexCode(string $hexColor): self;
+    public static function fromHSL(int $hue, $saturation, $lightness): self;
 
     public function __toString(): string;
 
     public function toRGB(): RGBColor;
-
     public function toHexCode(): CSSHexColor;
+    public function toHSL(): HSLColor;
 }
