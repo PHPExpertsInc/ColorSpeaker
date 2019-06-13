@@ -20,17 +20,22 @@ composer require phpexperts/color-speaker
 
 Initialize it with 3 standard RGB integers:
 ```php
-$rgb = new RGBSpeaker(123, 111, 55);
+$rgbSpeaker = ColorSpeaker::fromRGB(123, 111, 55);
+$hexSpeaker = ColorSpeaker::fromRGB(123, 111, 55);
 ```
 It can easily be used as a string for css-compatible output:
 ```php
 $csv = ".box { background-color: $rgb; }";
 // .box { background-color: rgb(123, 111,55); }
+$csvHex = ".box { background-color: $hexSpeaker; }";
+// .box { background-color: #7B6F37; }
 ```
-You can also fetch the RGBColor directly:
+You can also fetch the RGBColor and the HexColor directly:
 ```php
-$rgbColor = $rgb->toRGB();
+$rgbColor = $rgbSpeaker->toRGB();
 /*
+   (string) $rgbColor === rgb(123, 11, 55);
+
    SimpleDTO => {
        'red'   => 123,
        'green' => 111,
@@ -38,19 +43,45 @@ $rgbColor = $rgb->toRGB();
    };
 */
 ```
+
 See the [**SimpleDTO Project**](https://github.com/phpexpertsinc/simple-dto) for more.
 
 You can also export to different color formats:
 ```php
-$hexcode = $rgb->toHex();
-// #7B6F37
+$hexColor = $rgbSpeaker->toHexCode();
+/**
+    (string) $hexColor === #7B6F37
 
-// You can also make the hex code lowercase:
-$hexcode = $rgb->toHex(false);
-// #7b6f37
+    SimpleDTO => {
+        'hex' => '#7B6F37
+    }
+**/
+```
+
+All colors serializable and easily converted to JSON objects:
+
+```php
+echo json_encode($rgbColor, JSON_PRETTY_PRINT);
+/**
+{
+    "red": 123,
+    "green": 111,
+    "blue": 55
+}
+**/
 ```
 
 # Use cases
+
+PHPExperts\ColorSpeaker\ColorSpeaker  
+ ✔ Can be constructed from an RGBColor  
+ ✔ Can be constructed from a HexColor  
+ ✔ From RGB: Will only accept integers between 0 and 255, inclusive  
+ ✔ From CSS Hex: Will only accept a valid 3 or 6 digit Hex color string, 
+   starting with a "#" sign  
+ ✔ Can return an RGBColor  
+ ✔ Can return a CSSHexColor  
+ ✔ Can be outputted as a CSS string  
 
 PHPExperts\ColorSpeaker\DTOs\RGBColor  
  ✔ Will only accept integers between 0 and 255, inclusive  
@@ -58,27 +89,11 @@ PHPExperts\ColorSpeaker\DTOs\RGBColor
  ✔ Can be constructed with a zero-indexed array  
  ✔ Can be outputted as a CSS string  
 
-PHPExperts\ColorSpeaker\RGBSpeaker  
- ✔ Can be constructed from an RGBColor  
- ✔ Can be constructed from a HexColor  
- ✔ Will only accept integers between 0 and 255, inclusive  
- ✔ Can return an RGBColor  
- ✔ Can return a CSSHexColor  
- ✔ Can be outputted as a CSS string  
-
 PHPExperts\ColorSpeaker\DTOs\CSSHexColor  
  ✔ Can assert if a string is a valid CSS hex color  
  ✔ The hex code must start with a "#" sign  
  ✔ Will only accept three digit and six digit hex codes  
  ✔ Can be outputted as a CSS string  
-
-PHPExperts\ColorSpeaker\CSSHexSpeaker  
- ✔ Can be constructed from an RGB Color  
- ✔ Can be constructed from a HexColor  
- ✔ Can return an RGBColor  
- ✔ Can return a CSSHexColor  
- ✔ Can be outputted as a CSS string  
-
 
 ## Testing
 

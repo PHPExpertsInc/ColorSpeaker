@@ -106,7 +106,9 @@ class CSSHexColorTest extends TestCase
             '#1',
             '#12',
             '#1234',
+            '123',
             '#12345',
+            '123456',
             '#1234567',
         ];
 
@@ -122,9 +124,11 @@ class CSSHexColorTest extends TestCase
                 new CSSHexColor($hex);
                 $this->fail('Created an invalid hex color');
             } catch (InvalidDataTypeException $e) {
-                $actualLength = strlen($hex);
-                $expected = "Hex color codes must be 3 or 6 digits, not $actualLength";
-                self::assertSame($expected, $e->getMessage());
+                $digits = strlen($hex) - 1;
+                $expected = $hex !== '#' && ($hex[0] ?? '') !== '#' ?
+                    'Hex colors must begin with "#".' :
+                    'Hex color codes must be 3 or 6 digits, not ' . $digits . " ($hex)";
+                self::assertEquals($expected, $e->getMessage());
             }
         }
     }
@@ -132,8 +136,14 @@ class CSSHexColorTest extends TestCase
     /** @testdox Can be outputted as a CSS string */
     public function testCanBeOutputtedAsACSSString()
     {
+        // Long hex code
         $expected = '#FC5DE3';
         $hex = new CSSHexColor('#fc5De3');
+        self::assertEquals($expected, (string) $hex);
+
+        // Short hex code
+        $expected = '#666';
+        $hex = new CSSHexColor('#666');
         self::assertEquals($expected, (string) $hex);
     }
 }

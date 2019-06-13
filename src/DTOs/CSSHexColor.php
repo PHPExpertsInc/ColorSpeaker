@@ -44,10 +44,16 @@ final class CSSHexColor extends SimpleDTO implements Color
             throw new InvalidDataTypeException('Hex colors must begin with "#".');
         }
 
-        $digits = strlen($input['hex']);
-        if (!($digits === static::MY_MIN + 1 || $digits === static::MY_MAX + 1)) {
+        $digits = strlen($input['hex']) - 1;
+        if (!($digits === static::MY_MIN || $digits === static::MY_MAX)) {
             throw new InvalidDataTypeException(
-                sprintf('Hex color codes must be %d or %d digits, not %d', static::MY_MIN, static::MY_MAX, $digits)
+                sprintf(
+                    'Hex color codes must be %d or %d digits, not %d (%s)',
+                    static::MY_MIN,
+                    static::MY_MAX,
+                    $digits,
+                    $input['hex']
+                )
             );
         }
 

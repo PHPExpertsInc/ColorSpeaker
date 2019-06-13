@@ -15,11 +15,12 @@
  *                   http://archive.is/99WyU
  */
 
-namespace PHPExperts\ColorSpeaker;
+namespace PHPExperts\ColorSpeaker\internal;
 
 use PHPExperts\ColorSpeaker\DTOs\CSSHexColor;
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
 
+/** @internal */
 final class RGBSpeaker implements ColorSpeakerContract
 {
     /** @var RGBColor */
@@ -39,7 +40,7 @@ final class RGBSpeaker implements ColorSpeakerContract
      */
     public static function fromRGB(int $red, int $green, int $blue): ColorSpeakerContract
     {
-        $rgbColor = new RGBColor(['red' => $red, 'blue' => $blue, 'green' => $green]);
+        $rgbColor = new RGBColor(['red' => $red, 'green' => $green, 'blue' => $blue]);
 
         return new self($rgbColor);
     }
