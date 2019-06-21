@@ -18,6 +18,8 @@
 namespace PHPExperts\ColorSpeaker\Tests\internal;
 
 use PHPExperts\ColorSpeaker\DTOs\CSSHexColor;
+use PHPExperts\ColorSpeaker\DTOs\HSLColor;
+use PHPExperts\ColorSpeaker\internal\HSLSpeaker;
 use PHPExperts\ColorSpeaker\internal\RGBSpeaker;
 use PHPExperts\DataTypeValidator\InvalidDataTypeException;
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
@@ -29,18 +31,20 @@ class HSLSpeakerTest extends TestCase
     /** @testdox Can be constructed from an RGBColor */
     public function testCanBeConstructedFromAnRGBColor()
     {
-        $rgbColor = new RGBColor([0, 0, 255]);
-        $expected = new RGBSpeaker($rgbColor);
-        $actual = RGBSpeaker::fromRGB(0, 0, 255);
+        $hslColor = new HSLColor([240, 100, 0.5]);
+        $expected = new HSLSpeaker($hslColor);
+        $actual = HSLSpeaker::fromRGB(0, 0, 255);
 
         self::assertEquals($expected, $actual);
+        $cssCode = 'hsl(240, 100%, 50%)';
+        self::assertEquals($cssCode, (string) $actual);
     }
 
     /** @testdox Can be constructed from a HexColor */
     public function testCanBeConstructedFromAHexColor()
     {
         $rgbColor = new RGBColor([18, 52, 86]);
-        $expected = new RGBSpeaker($rgbColor);
+        $expected = new HSLSpeaker($rgbColor);
         $actual = RGBSpeaker::fromHexCode('#123456');
 
         self::assertEquals($expected, $actual);

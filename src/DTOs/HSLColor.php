@@ -32,8 +32,8 @@ use PHPExperts\SimpleDTO\SimpleDTO;
  */
 final class HSLColor extends SimpleDTO
 {
-    public const HUE_MIN = 0;
-    public const HUE_MAX = 360;
+    private const HUE_MIN = 0;
+    private const HUE_MAX = 360;
 
     /** @var DataTypeValidator */
     private $validator;
@@ -72,6 +72,7 @@ final class HSLColor extends SimpleDTO
         };
 
         $convertFromPercents();
+//        dd($input);
 
         parent::__construct($input, $options, $validator);
     }
@@ -80,26 +81,22 @@ final class HSLColor extends SimpleDTO
     {
         $reasons = [];
         if ($input['hue'] < self::HUE_MIN || $input['hue'] > self::HUE_MAX) {
-            $reasons[] = [
-                sprintf(
-                    'HSLColor\'s Hue must be between %d and %d, not %d',
-                    self::HUE_MIN,
-                    self::HUE_MAX,
-                    $input['hue']
-                )
-            ];
+            $reasons[] = sprintf(
+                'HSLColor\'s Hue must be between %d and %d, not %d',
+                self::HUE_MIN,
+                self::HUE_MAX,
+                $input['hue']
+            );
         }
 
         foreach (['saturation', 'lightness'] as $geometry) {
             if ($input[$geometry] < 0.00 || $input[$geometry] > 1.00) {
-                $reasons[] = [
-                    sprintf(
-                        "HSLColor's $geometry must be between %0.2f and %0.2f, not %0.2f",
-                        0.00,
-                        1.00,
-                        $input[$geometry]
-                    )
-                ];
+                $reasons[] = sprintf(
+                    "HSLColor's $geometry must be between %0.2f and %0.2f, not %0.2f",
+                    0.00,
+                    1.00,
+                    $input[$geometry]
+                );
             }
         }
 
@@ -112,10 +109,10 @@ final class HSLColor extends SimpleDTO
     public function __toString(): string
     {
         return sprintf(
-            'hsl(%d, %d, %d)',
+            'hsl(%d, %d%%, %d%%)',
             $this->hue,
-            $this->saturation,
-            $this->lightness
+            $this->saturation * 100,
+            $this->lightness * 100
         );
     }
 }

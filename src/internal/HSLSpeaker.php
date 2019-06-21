@@ -112,6 +112,7 @@ final class HSLSpeaker implements ColorSpeakerContract
         };
 
         $hslArray = $RGBtoHSV($rgbColor->red, $rgbColor->green, $rgbColor->blue);
+        dd($hslArray);
 
         // Convert the whole percents into proper fractions.
         $hslArray[1] /= 100.00;

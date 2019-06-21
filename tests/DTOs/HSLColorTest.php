@@ -30,16 +30,20 @@ class HSLColorTest extends TestCase
     public static function fetchBadHSL(): array
     {
         return [
-            [361, 100.01, 55], [
-                '',
-                '',
-                '',
-            ],
-            [0.1, -0.01, -0.01], [
-                '',
-                '',
-                '',
-            ],
+            [[361, 100.01, 55], [
+                'HSLColor\'s Hue must be between 0 and 360, not 361',
+                'HSLColor\'s saturation must be between 0.00 and 1.00, not 100.01',
+            ]],
+            [[-5, 1.1, 1.1], [
+                'HSLColor\'s Hue must be between 0 and 360, not -5',
+                'HSLColor\'s saturation must be between 0.00 and 1.00, not 1.10',
+                'HSLColor\'s lightness must be between 0.00 and 1.00, not 1.10',
+            ]],
+            [[-2, -0.01, -0.01], [
+                'HSLColor\'s Hue must be between 0 and 360, not -2',
+                'HSLColor\'s saturation must be between 0.00 and 1.00, not -0.01',
+                'HSLColor\'s lightness must be between 0.00 and 1.00, not -0.01',
+            ]],
         ];
     }
 
@@ -58,46 +62,49 @@ class HSLColorTest extends TestCase
         }
 
         $badHSLs = self::fetchBadHSL();
-        foreach ($badHSLs as $hsl) {
+
+        /**
+         * @var float[] $hsl
+         * @var string[] $expected
+         */
+        foreach ($badHSLs as [$hsl, $expected]) {
             try {
                 new HSLColor($hsl);
                 $this->fail('Created an invalid HSLColor');
             } catch (InvalidDataTypeException $e) {
                 self::assertEquals('Invalid HSL geometry.', $e->getMessage());
-                dd([$hsl, $e->getReasons()]);
+
+                if ($e->getReasons() !== $expected) {
+                    dd([$hsl, $e->getReasons()]);
+                }
+
+                self::assertEquals($expected, $e->getReasons());
             }
-        }
-    }
-
-    public function testWillOnlyAcceptLiteralIntegers()
-    {
-        try {
-            new RGBColor(['red' => '1', 'green' => 1.1, 'blue' => 0]);
-        } catch (InvalidDataTypeException $e) {
-            $expected = [
-                'red'   => 'red is not a valid int',
-                'green' => 'green is not a valid int',
-            ];
-
-            self::assertEquals('There were 2 validation errors.', $e->getMessage());
-            self::assertEquals($expected, $e->getReasons());
         }
     }
 
     /** @testdox Can be constructed with a zero-indexed array */
     public function testCanBeConstructedWithAZeroIndexedArray()
     {
-        $expected = new RGBColor(['red' => 1, 'green' => 26, 'blue' => 0]);
-        $actual = new RGBColor([1, 26, 0]);
+        $expected = new HSLColor(['hue' => 1, 'saturation' => 26, 'lightness' => 0]);
+        $actual = new HSLColor([1, 26, 0]);
 
         self::assertEquals($expected, $actual);
+    }
+
+    public function testCanBeConstructedWithIntegersOrFloats()
+    {
+        $floats = new HSLColor(['hue' => 1, 'saturation' => 0.26, 'lightness' => 0.15]);
+        $ints = new HSLColor(['hue' => 1, 'saturation' => 26, 'lightness' => 15]);
+
+        self::assertEquals($floats, $ints);
     }
 
     /** @testdox Can be outputted as a CSS string */
     public function testCanBeOutputtedAsACSSString()
     {
-        $expected = 'rgb(127, 127, 127)';
-        $rgb = new RGBColor([127, 127, 127]);
-        self::assertEquals($expected, (string) $rgb);
+        $expected = 'hsl(127, 11%, 33%)';
+        $hsl = new HSLColor([127, 11, 33]);
+        self::assertEquals($expected, (string) $hsl);
     }
 }

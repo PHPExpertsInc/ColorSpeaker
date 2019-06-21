@@ -26,8 +26,8 @@ use PHPExperts\SimpleDTO\SimpleDTO;
  */
 final class CSSHexColor extends SimpleDTO implements Color
 {
-    public const MY_MIN = 3; // +1 for the '#' character.
-    public const MY_MAX = 6; // +1 for the '#' character.
+    private const MY_MIN = 3; // +1 for the '#' character.
+    private const MY_MAX = 6; // +1 for the '#' character.
 
     public function __construct(string $hex, array $options = [], DataTypeValidator $validator = null)
     {
