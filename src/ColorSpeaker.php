@@ -18,9 +18,11 @@
 namespace PHPExperts\ColorSpeaker;
 
 use PHPExperts\ColorSpeaker\DTOs\CSSHexColor;
+use PHPExperts\ColorSpeaker\DTOs\HSLColor;
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
 use PHPExperts\ColorSpeaker\internal\ColorSpeakerContract;
 use PHPExperts\ColorSpeaker\internal\CSSHexSpeaker;
+use PHPExperts\ColorSpeaker\internal\HSLSpeaker;
 use PHPExperts\ColorSpeaker\internal\RGBSpeaker;
 
 class ColorSpeaker implements ColorSpeakerContract
@@ -59,6 +61,20 @@ class ColorSpeaker implements ColorSpeakerContract
         return new self($hexSpeaker);
     }
 
+    /**
+     * @param int        $hue
+     * @param int|string $saturation
+     * @param int|string $lightness
+     *
+     * @return self
+     */
+    public static function fromHSL(int $hue, $saturation, $lightness): ColorSpeakerContract
+    {
+        $hslSpeaker = HSLSpeaker::fromHSL($hue, $saturation, $lightness);
+
+        return new self($hslSpeaker);
+    }
+
     public function __toString(): string
     {
         return $this->colorSpeaker->__toString();
@@ -72,6 +88,11 @@ class ColorSpeaker implements ColorSpeakerContract
     public function toHexCode(): CSSHexColor
     {
         return $this->colorSpeaker->toHexCode();
+    }
+
+    public function toHSL(): HSLColor
+    {
+        return $this->colorSpeaker->toHSL();
     }
 
     /**

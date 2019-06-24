@@ -18,6 +18,7 @@
 namespace PHPExperts\ColorSpeaker\internal;
 
 use PHPExperts\ColorSpeaker\DTOs\CSSHexColor;
+use PHPExperts\ColorSpeaker\DTOs\HSLColor;
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
 
 /** @internal */
@@ -44,7 +45,7 @@ final class CSSHexSpeaker implements ColorSpeakerContract
         $hex = sprintf('#%02x%02x%02x', $rgbColor->red, $rgbColor->green, $rgbColor->blue);
         $hex = strtoupper($hex);
 
-        return new CSSHexSpeaker(new CSSHexColor($hex));
+        return new self(new CSSHexColor($hex));
     }
 
     /**
@@ -55,6 +56,13 @@ final class CSSHexSpeaker implements ColorSpeakerContract
     public static function fromHexCode(string $hex): ColorSpeakerContract
     {
         return new self(new CSSHexColor($hex));
+    }
+
+    public static function fromHSL(int $hue, $saturation, $lightness): ColorSpeakerContract
+    {
+        $hexColor = HSLSpeaker::fromHSL($hue, $saturation, $lightness)->toHexCode();
+
+        return new self($hexColor);
     }
 
     public function __toString(): string
@@ -70,6 +78,13 @@ final class CSSHexSpeaker implements ColorSpeakerContract
     public function toHexCode(): CSSHexColor
     {
         return $this->color;
+    }
+
+    public function toHSL(): HSLColor
+    {
+        $rgbColor = $this->convertToRGB();
+
+        return HSLSpeaker::fromRGB($rgbColor->red, $rgbColor->green, $rgbColor->blue)->toHSL();
     }
 
     /**

@@ -18,7 +18,9 @@
 namespace PHPExperts\ColorSpeaker\Tests\internal;
 
 use PHPExperts\ColorSpeaker\DTOs\CSSHexColor;
+use PHPExperts\ColorSpeaker\DTOs\HSLColor;
 use PHPExperts\ColorSpeaker\internal\RGBSpeaker;
+use PHPExperts\ColorSpeaker\Tests\TestHelper;
 use PHPExperts\DataTypeValidator\InvalidDataTypeException;
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
 use PHPUnit\Framework\TestCase;
@@ -44,6 +46,25 @@ class RGBSpeakerTest extends TestCase
         $actual = RGBSpeaker::fromHexCode('#123456');
 
         self::assertEquals($expected, $actual);
+    }
+
+    /** @testdox Can be constructed from an HSLColor */
+    public function testCanBeConstructedFromAnHSLColor()
+    {
+        $colorSets = TestHelper::fetchGoodColorSets();
+
+        foreach ($colorSets as [$cssInfo, $rgbInfo, $hslInfo]) {
+            // Test for 0, 0s.
+            if ($hslInfo[2] === 0 || $hslInfo[2] === 100) {
+                $hslInfo[0] = $hslInfo[1] = 0;
+            }
+
+            $rgbColor = new RGBColor($rgbInfo);
+            $expected = new RGBSpeaker($rgbColor);
+            $actual = RGBSpeaker::fromHSL($hslInfo[0], $hslInfo[1], $hslInfo[2]);
+
+            self::assertEquals($expected, $actual);
+        }
     }
 
     /** @testdox Will only accept integers between 0 and 255, inclusive */
@@ -92,6 +113,25 @@ class RGBSpeakerTest extends TestCase
 
             $expectedHexColor = new CSSHexColor($expected);
             self::assertEquals($expectedHexColor, $rgb->toHexCode());
+        }
+    }
+
+    /** @testdox Can return an HSLColor */
+    public function testCanReturnAnHSLColor()
+    {
+        $colorSets = TestHelper::fetchGoodColorSets();
+
+        foreach ($colorSets as [$cssInfo, $rgbInfo, $hslInfo]) {
+            // Test for 0, 0s.
+            if ($hslInfo[2] === 0 || $hslInfo[2] === 100) {
+                $hslInfo[0] = $hslInfo[1] = 0;
+            }
+
+            $expectedDTO = new HSLColor(['hue' => $hslInfo[0], 'saturation' => $hslInfo[1], 'lightness' => $hslInfo[2]]);
+            $rgbColor = new RGBColor($rgbInfo);
+            $rgb = new RGBSpeaker($rgbColor);
+
+            self::assertEquals($expectedDTO, $rgb->toHSL());
         }
     }
 

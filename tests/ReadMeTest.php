@@ -28,16 +28,18 @@ class ReadMeTest extends TestCase
     public function testExample1()
     {
         $rgbSpeaker = ColorSpeaker::fromRGB(123, 111, 55);
-
         $expected = '.box { background-color: rgb(123, 111, 55); }';
         $csv = ".box { background-color: $rgbSpeaker; }";
-
         self::assertEquals($expected, $csv);
         
         $hexSpeaker = ColorSpeaker::fromHexCode('#7B6F37');
         $expected = '.box { background-color: #7B6F37; }';
         $csvHex = ".box { background-color: $hexSpeaker; }";
+        self::assertEquals($expected, $csvHex);
 
+        $hslSpeaker = ColorSpeaker::fromHSL(49, 38, 35);
+        $expected = '.box { background-color: hsl(49, 38%, 35%); }';
+        $csvHex = ".box { background-color: $hslSpeaker; }";
         self::assertEquals($expected, $csvHex);
     }
 

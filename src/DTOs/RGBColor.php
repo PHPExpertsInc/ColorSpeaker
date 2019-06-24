@@ -29,8 +29,8 @@ final class RGBColor extends SimpleDTO implements Color
 {
     use MinMax;
 
-    public const MY_MIN = 0;
-    public const MY_MAX = 255;
+    private const MY_MIN = 0;
+    private const MY_MAX = 255;
 
     public function __construct(array $input, array $options = [], DataTypeValidator $validator = null)
     {
