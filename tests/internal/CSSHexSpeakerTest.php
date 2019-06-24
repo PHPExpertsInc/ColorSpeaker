@@ -18,7 +18,9 @@
 namespace PHPExperts\ColorSpeaker\Tests\internal;
 
 use PHPExperts\ColorSpeaker\DTOs\CSSHexColor;
+use PHPExperts\ColorSpeaker\DTOs\HSLColor;
 use PHPExperts\ColorSpeaker\internal\CSSHexSpeaker;
+use PHPExperts\ColorSpeaker\Tests\TestHelper;
 use PHPExperts\DataTypeValidator\InvalidDataTypeException;
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
 use PHPUnit\Framework\TestCase;
@@ -53,12 +55,30 @@ class CSSHexSpeakerTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
+    /** @testdox Can be constructed from an HSLColor */
+    public function testCanBeConstructedFromAnHSLColor()
+    {
+        $colorSets = TestHelper::fetchGoodColorSets();
+
+        foreach ($colorSets as [$cssInfo, $rgbInfo, $hslInfo]) {
+            // Test for 0, 0s.
+            if ($hslInfo[2] === 0 || $hslInfo[2] === 100) {
+                $hslInfo[0] = $hslInfo[1] = 0;
+            }
+
+            $hexColor = new CSSHexColor($cssInfo);
+            $expected = new CSSHexSpeaker($hexColor);
+            $actual = CSSHexSpeaker::fromHSL($hslInfo[0], $hslInfo[1], $hslInfo[2]);
+
+            self::assertEquals($expected, $actual);
+        }
+    }
+
     public function testWillWorkWithShortHexColorCodes()
     {
         $hexColor = new CSSHexColor('#CCC');
         $expected = new CSSHexSpeaker($hexColor);
         $actual = CSSHexSpeaker::fromHexCode('#CCC');
-        $rgbColor = $actual->toRGB();
 
         self::assertEquals($expected, $actual);
     }
@@ -92,6 +112,25 @@ class CSSHexSpeakerTest extends TestCase
         $expectedDTO = new CSSHexColor('#123456');
         $hex = new CSSHexSpeaker(new CSSHexColor('#123456'));
         self::assertEquals($expectedDTO, $hex->toHexCode());
+    }
+
+    /** @testdox Can return an HSLColor */
+    public function testCanReturnAnHSLColor()
+    {
+        $colorSets = TestHelper::fetchGoodColorSets();
+
+        foreach ($colorSets as [$cssInfo, $rgbInfo, $hslInfo]) {
+            // Test for 0, 0s.
+            if ($hslInfo[2] === 0 || $hslInfo[2] === 100) {
+                $hslInfo[0] = $hslInfo[1] = 0;
+            }
+
+            $expectedDTO = new HSLColor(['hue' => $hslInfo[0], 'saturation' => $hslInfo[1], 'lightness' => $hslInfo[2]]);
+            $hexColor = new CSSHexColor($cssInfo);
+            $hex = new CSSHexSpeaker($hexColor);
+
+            self::assertEquals($expectedDTO, $hex->toHSL());
+        }
     }
 
     /** @testdox Can be outputted as a CSS string */

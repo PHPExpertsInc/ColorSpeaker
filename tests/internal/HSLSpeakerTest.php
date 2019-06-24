@@ -20,52 +20,69 @@ namespace PHPExperts\ColorSpeaker\Tests\internal;
 use PHPExperts\ColorSpeaker\DTOs\CSSHexColor;
 use PHPExperts\ColorSpeaker\DTOs\HSLColor;
 use PHPExperts\ColorSpeaker\internal\HSLSpeaker;
-use PHPExperts\ColorSpeaker\internal\RGBSpeaker;
+use PHPExperts\ColorSpeaker\Tests\TestHelper;
 use PHPExperts\DataTypeValidator\InvalidDataTypeException;
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
 use PHPUnit\Framework\TestCase;
 
-/** @testdox PHPExperts\ColorSpeaker\RGBSpeaker */
+/** @testdox PHPExperts\ColorSpeaker\HSLSpeaker */
 class HSLSpeakerTest extends TestCase
 {
     /** @testdox Can be constructed from an RGBColor */
     public function testCanBeConstructedFromAnRGBColor()
     {
-        $hslColor = new HSLColor([240, 100, 0.5]);
-        $expected = new HSLSpeaker($hslColor);
-        $actual = HSLSpeaker::fromRGB(0, 0, 255);
+        $colorSets = TestHelper::fetchGoodColorSets();
 
-        self::assertEquals($expected, $actual);
-        $cssCode = 'hsl(240, 100%, 50%)';
-        self::assertEquals($cssCode, (string) $actual);
+        foreach ($colorSets as [$cssInfo, $rgbInfo, $hslInfo]) {
+            // Test for 0, 0s.
+            if ($hslInfo[2] === 0 || $hslInfo[2] === 100) {
+                $hslInfo[0] = $hslInfo[1] = 0;
+            }
+
+            $hslColor = new HSLColor($hslInfo);
+            $expected = new HSLSpeaker($hslColor);
+            $actual = HSLSpeaker::fromRGB($rgbInfo[0], $rgbInfo[1], $rgbInfo[2]);
+
+            self::assertEquals($expected, $actual);
+        }
     }
 
     /** @testdox Can be constructed from a HexColor */
     public function testCanBeConstructedFromAHexColor()
     {
-        $rgbColor = new RGBColor([18, 52, 86]);
-        $expected = new HSLSpeaker($rgbColor);
-        $actual = RGBSpeaker::fromHexCode('#123456');
+        $hslColor = new HSLColor([210, 65, 20]);
+        $expected = new HSLSpeaker($hslColor);
+        $actual = HSLSpeaker::fromHexCode('#123456');
 
         self::assertEquals($expected, $actual);
     }
 
-    /** @testdox Will only accept integers between 0 and 255, inclusive */
-    public function testWillOnlyAcceptIntegersBetween0And255Inclusive()
+    /** @testdox Can be constructed from an HSLColor */
+    public function testCanBeConstructedFromAnHSLColor()
     {
-        $rgb = new RGBSpeaker(new RGBColor([0, 0, 255]));
-        self::assertInstanceOf(RGBSpeaker::class, $rgb);
+        $hslColor = new HSLColor([210, 65, 20]);
+        $expected = new HSLSpeaker($hslColor);
+        $actual = HSLSpeaker::fromHSL(210, '65%', '20%');
+
+        self::assertEquals($expected, $actual);
+    }
+
+    /** @testdox Will only accept a valid HSL geometry of percentages or percent-integers */
+    public function testWillOnlyAcceptHuInclusive()
+    {
+        $hsl = new HSLSpeaker(new HSLColor([359, 0, 99]));
+        self::assertInstanceOf(HSLSpeaker::class, $hsl);
 
         try {
-            new RGBSpeaker(new RGBColor([-1, 5, 256]));
+            new HSLSpeaker(new HSLColor([-1, 0, 101]));
             $this->fail('Created an invalid DTO.');
         } catch (InvalidDataTypeException $e) {
             $expected = [
-                'red'  => 'Must be greater than or equal to 0, not -1',
-                'blue' => 'Must be lesser than or equal to 255, not 256',
+                'hue'        => 'Must be between 0 and 359, not -1',
+                'lightness'  => 'Must be between 0 and 100, not 101',
             ];
 
-            self::assertSame('Color values must be between 0 and 255, inclusive.', $e->getMessage());
+            self::assertSame('Invalid HSL geometry.', $e->getMessage());
             self::assertSame($expected, $e->getReasons());
         }
     }
@@ -73,37 +90,57 @@ class HSLSpeakerTest extends TestCase
     /** @testdox Can return an RGBColor */
     public function testCanReturnAnRGBColor()
     {
-        $expectedDTO = new RGBColor(['red' => 1, 'green' => 1, 'blue' => 1]);
-        $rgb = new RGBSpeaker(new RGBColor([1, 1, 1]));
-        self::assertEquals($expectedDTO, $rgb->toRGB());
+        $colorSets = TestHelper::fetchGoodColorSets();
+
+        foreach ($colorSets as [$cssInfo, $rgbInfo, $hslInfo]) {
+            $expectedDTO = new RGBColor(['red' => $rgbInfo[0], 'green' => $rgbInfo[1], 'blue' => $rgbInfo[2]]);
+            $hslColor = new HSLColor(['hue' => $hslInfo[0], 'saturation' => $hslInfo[1], 'lightness' => $hslInfo[2]]);
+            $hsl = new HSLSpeaker($hslColor);
+
+            self::assertEquals($expectedDTO, $hsl->toRGB());
+        }
     }
 
     /** @testdox Can return a CSSHexColor */
     public function testCanReturnACSSHexColor()
     {
-        $rgbHexPairs = [
-            '#123456' => new RGBColor([ 18,  52,  86]),
-            '#803737' => new RGBColor([128,  55,  55]),
-            '#374F80' => new RGBColor([ 55,  79, 128]),
-            '#398037' => new RGBColor([ 57, 128,  55]),
-            '#09EC01' => new RGBColor([  9, 236,   1]),
-            '#000099' => new RGBColor([  0,   0, 153]),
-        ];
+        $colorSets = TestHelper::fetchGoodColorSets();
 
-        foreach ($rgbHexPairs as $expected => $rgbDTO) {
-            $rgb = new RGBSpeaker($rgbDTO);
-            self::assertEquals($expected, $rgb->toHexCode());
+        foreach ($colorSets as [$expectedHex, $rgbInfo, $hslInfo]) {
+            $expectedDTO = new CSSHexColor($expectedHex);
+            $hslColor = new HSLColor(['hue' => $hslInfo[0], 'saturation' => $hslInfo[1], 'lightness' => $hslInfo[2]]);
+            $hsl = new HSLSpeaker($hslColor);
 
-            $expectedHexColor = new CSSHexColor($expected);
-            self::assertEquals($expectedHexColor, $rgb->toHexCode());
+            self::assertEquals($expectedDTO, $hsl->toHexCode());
+            self::assertEquals(strtoupper($expectedHex), (string) $hsl->toHexCode());
+        }
+    }
+
+    /** @testdox Can return an HSLColor */
+    public function testCanReturnAnHSLColor()
+    {
+        $colorSets = TestHelper::fetchGoodColorSets();
+
+        foreach ($colorSets as [$cssInfo, $rgbInfo, $hslInfo]) {
+            // Test for 0, 0s.
+            if ($hslInfo[2] === 0 || $hslInfo[2] === 100) {
+                $hslInfo[0] = $hslInfo[1] = 0;
+            }
+
+            $expectedDTO = new HSLColor(['hue' => $hslInfo[0], 'saturation' => $hslInfo[1], 'lightness' => $hslInfo[2]]);
+            $hslColor = new HSLColor(['hue' => $hslInfo[0], 'saturation' => $hslInfo[1], 'lightness' => $hslInfo[2]]);
+            $hsl = new HSLSpeaker($hslColor);
+
+            self::assertEquals($expectedDTO, $hsl->toHSL());
         }
     }
 
     /** @testdox Can be outputted as a CSS string */
     public function testCanBeOutputtedAsACSSString()
     {
-        $expected = 'rgb(127, 127, 127)';
-        $rgb = new RGBSpeaker(new RGBColor([127, 127, 127]));
-        self::assertEquals($expected, (string) $rgb);
+        // rgb(127, 127, 127)
+        $expected = 'hsl(0, 0%, 50%)';
+        $hsl = new HSLSpeaker(new HSLColor([0, 0, 50]));
+        self::assertEquals($expected, (string) $hsl);
     }
 }

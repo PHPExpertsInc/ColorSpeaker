@@ -19,7 +19,9 @@ namespace PHPExperts\ColorSpeaker\Tests;
 
 use PHPExperts\ColorSpeaker\ColorSpeaker;
 use PHPExperts\ColorSpeaker\DTOs\CSSHexColor;
+use PHPExperts\ColorSpeaker\DTOs\HSLColor;
 use PHPExperts\ColorSpeaker\internal\CSSHexSpeaker;
+use PHPExperts\ColorSpeaker\internal\HSLSpeaker;
 use PHPExperts\ColorSpeaker\internal\RGBSpeaker;
 use PHPExperts\DataTypeValidator\InvalidDataTypeException;
 use PHPExperts\ColorSpeaker\DTOs\RGBColor;
@@ -34,6 +36,7 @@ class ColorSpeakerTest extends TestCase
     {
         $rgbColor = new RGBColor([0, 0, 255]);
         $hexColor = new CSSHexColor('#0000FF');
+        $hslColor = new HSLColor([240, 100, 50]);
         $expected = new RGBSpeaker($rgbColor);
 
         $actual = ColorSpeaker::fromRGB(0, 0, 255);
@@ -41,19 +44,37 @@ class ColorSpeakerTest extends TestCase
         self::assertEquals($expected, $actual->getTranslator());
         self::assertEquals($rgbColor, $actual->getTranslator()->toRGB());
         self::assertEquals($hexColor, $actual->getTranslator()->toHexCode());
+        self::assertEquals($hslColor, $actual->getTranslator()->toHSL());
     }
 
     /** @testdox Can be constructed from a HexColor */
     public function testCanBeConstructedFromAHexColor()
     {
-        $rgbColor = new RGBColor([18, 52, 86]);
-        $hexColor = new CSSHexColor('#123456');
+        $rgbColor = new RGBColor([83, 70, 180]);
+        $hexColor = new CSSHexColor('#5346B4');
+        $hslColor = new HSLColor([247, 44, 49]);
         $expected = new CSSHexSpeaker($hexColor);
-        $actual = ColorSpeaker::fromHexCode('#123456');
+        $actual = ColorSpeaker::fromHexCode('#5346B4');
 
         self::assertEquals($expected, $actual->getTranslator());
         self::assertEquals($rgbColor, $actual->getTranslator()->toRGB());
         self::assertEquals($hexColor, $actual->getTranslator()->toHexCode());
+        self::assertEquals($hslColor, $actual->getTranslator()->toHSL());
+    }
+
+    /** @testdox Can be constructed from an HSLColor */
+    public function testCanBeConstructedFromAnHSLColor()
+    {
+        $rgbColor = new RGBColor([55, 80, 129]);
+        $hexColor = new CSSHexColor('#375081');
+        $hslColor = new HSLColor([220, 40, 36]);
+        $expected = new HSLSpeaker($hslColor);
+        $actual = ColorSpeaker::fromHSL(220, 40, 36);
+
+        self::assertEquals($expected, $actual->getTranslator());
+        self::assertEquals($rgbColor, $actual->getTranslator()->toRGB());
+        self::assertEquals($hexColor, $actual->getTranslator()->toHexCode());
+        self::assertEquals($hslColor, $actual->getTranslator()->toHSL());
     }
 
     /** @testdox From RGB: Will only accept integers between 0 and 255, inclusive */
@@ -142,6 +163,16 @@ class ColorSpeakerTest extends TestCase
             $expectedHexColor = new CSSHexColor($expected);
             self::assertEquals($expectedHexColor, $colorSpeaker->toHexCode());
         }
+    }
+
+    /** @testdox Can return an HSLColor */
+    public function testCanReturnAnHSLColor()
+    {
+        // ['#09EF01', [  9, 239,   1], [118,     99,    47]],
+        $colorSpeaker = ColorSpeaker::fromHexCode('#09EF01');
+        $expected = 'hsl(118, 99%, 47%)';
+
+        self::assertEquals($expected, (string) $colorSpeaker->toHSL());
     }
 
     /** @testdox Can be outputted as a CSS string */

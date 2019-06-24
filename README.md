@@ -22,6 +22,7 @@ Initialize it with 3 standard RGB integers:
 ```php
 $rgbSpeaker = ColorSpeaker::fromRGB(123, 111, 55);
 $hexSpeaker = ColorSpeaker::fromHexCode('#7B6F37');
+$hslSpeaker = ColorSpeaker::fromHSL(49, 38, 35);
 ```
 It can easily be used as a string for css-compatible output:
 ```php
@@ -78,11 +79,13 @@ echo json_encode($rgbColor, JSON_PRETTY_PRINT);
 PHPExperts\ColorSpeaker\ColorSpeaker  
  ✔ Can be constructed from an RGBColor  
  ✔ Can be constructed from a HexColor  
+ ✔ Can be constructed from an HSLColor  
  ✔ From RGB: Will only accept integers between 0 and 255, inclusive  
  ✔ From CSS Hex: Will only accept a valid 3 or 6 digit Hex color string, 
    starting with a "#" sign  
  ✔ Can return an RGBColor  
  ✔ Can return a CSSHexColor  
+ ✔ Can return an HSLColor  
  ✔ Can be outputted as a CSS string  
 
 PHPExperts\ColorSpeaker\DTOs\RGBColor  
@@ -97,6 +100,12 @@ PHPExperts\ColorSpeaker\DTOs\CSSHexColor
  ✔ Will only accept three digit and six digit hex codes  
  ✔ Can be outputted as a CSS string  
 
+PHPExperts\ColorSpeaker\DTOs\HSLColor  
+ ✔ Will only accept a valid HSL geometry of percentages or percent-integers  
+ ✔ Can be constructed with a zero-indexed array  
+ ✔ Can be constructed with integers  
+ ✔ Can be outputted as a CSS string  
+
 ## Testing
 
 ```bash
@@ -108,6 +117,9 @@ phpunit --testdox
 [Theodore R. Smith](https://www.phpexperts.pro/]) <theodore@phpexperts.pro>  
 GPG Fingerprint: 4BF8 2613 1C34 87AC D28F  2AD8 EB24 A91D D612 5690  
 CEO: PHP Experts, Inc.
+
+A **big** shoutout to https://www.w3schools.com/colors/colors_converter.asp.
+That *wonderful* color converter made this project's development 70% easier!
 
 ## License
 

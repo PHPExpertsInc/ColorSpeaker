@@ -61,11 +61,18 @@ class ColorSpeaker implements ColorSpeakerContract
         return new self($hexSpeaker);
     }
 
+    /**
+     * @param int        $hue
+     * @param int|string $saturation
+     * @param int|string $lightness
+     *
+     * @return self
+     */
     public static function fromHSL(int $hue, $saturation, $lightness): ColorSpeakerContract
     {
         $hslSpeaker = HSLSpeaker::fromHSL($hue, $saturation, $lightness);
 
-        return $hslSpeaker;
+        return new self($hslSpeaker);
     }
 
     public function __toString(): string

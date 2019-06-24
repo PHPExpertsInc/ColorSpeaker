@@ -20,7 +20,6 @@ namespace PHPExperts\ColorSpeaker\Tests\DTOs;
 use PHPExperts\ColorSpeaker\DTOs\HSLColor;
 use PHPExperts\ColorSpeaker\Tests\TestHelper;
 use PHPExperts\DataTypeValidator\InvalidDataTypeException;
-use PHPExperts\ColorSpeaker\DTOs\RGBColor;
 use PHPExperts\SimpleDTO\SimpleDTO;
 use PHPUnit\Framework\TestCase;
 
@@ -30,27 +29,27 @@ class HSLColorTest extends TestCase
     public static function fetchBadHSL(): array
     {
         return [
-            [[361, 100.01, 55], [
-                'HSLColor\'s Hue must be between 0 and 360, not 361',
-                'HSLColor\'s saturation must be between 0.00 and 1.00, not 100.01',
+            [[361, 101, 55], [
+                'hue'        => 'Must be between 0 and 359, not 361',
+                'saturation' => 'Must be between 0 and 100, not 101',
             ]],
-            [[-5, 1.1, 1.1], [
-                'HSLColor\'s Hue must be between 0 and 360, not -5',
-                'HSLColor\'s saturation must be between 0.00 and 1.00, not 1.10',
-                'HSLColor\'s lightness must be between 0.00 and 1.00, not 1.10',
+            [[-5, 110, 110], [
+                'hue'        => 'Must be between 0 and 359, not -5',
+                'saturation' => 'Must be between 0 and 100, not 110',
+                'lightness'  => 'Must be between 0 and 100, not 110',
             ]],
-            [[-2, -0.01, -0.01], [
-                'HSLColor\'s Hue must be between 0 and 360, not -2',
-                'HSLColor\'s saturation must be between 0.00 and 1.00, not -0.01',
-                'HSLColor\'s lightness must be between 0.00 and 1.00, not -0.01',
+            [[-2, -1, -1], [
+                'hue'        => 'Must be between 0 and 359, not -2',
+                'saturation' => 'Must be between 0 and 100, not -1',
+                'lightness'  => 'Must be between 0 and 100, not -1',
             ]],
         ];
     }
 
-    /** @testdox Will only accept a valid HSL geometry as floats, percentages, or percent-integers */
+    /** @testdox Will only accept a valid HSL geometry of percentages or percent-integers */
     public function testWillOnlyAcceptAValidHSLGeometry()
     {
-        $goodHSLs = array_column(TestHelper::fetchGoodColorPairs(), 2);
+        $goodHSLs = array_column(TestHelper::fetchGoodColorSets(), 2);
         foreach ($goodHSLs as $hsl) {
             try {
                 $hslColor = new HSLColor($hsl);
@@ -92,12 +91,12 @@ class HSLColorTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function testCanBeConstructedWithIntegersOrFloats()
+    public function testCanBeConstructedWithIntegers()
     {
-        $floats = new HSLColor(['hue' => 1, 'saturation' => 0.26, 'lightness' => 0.15]);
-        $ints = new HSLColor(['hue' => 1, 'saturation' => 26, 'lightness' => 15]);
+        $hslColor = new HSLColor(['hue' => 1, 'saturation' => 26, 'lightness' => 15]);
 
-        self::assertEquals($floats, $ints);
+        self::assertInstanceOf(HSLColor::class, $hslColor);
+        self::assertInstanceOf(SimpleDTO::class, $hslColor);
     }
 
     /** @testdox Can be outputted as a CSS string */

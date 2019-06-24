@@ -45,78 +45,61 @@ final class HSLSpeaker implements ColorSpeakerContract
         $rgbColor = new RGBColor(['red' => $red, 'green' => $green, 'blue' => $blue]);
 
         /**
-         * Taken from https://stackoverflow.com/a/13887939/430062
+         * Taken from https://stackoverflow.com/a/9493060/430062 plus comments.
          *
-         * Copyright © 2012 https://stackoverflow.com/users/629493/unsigned
-         * Licensed under the terms of the BSD License.
-         * (Basically, this means you can do whatever you like with it,
-         *   but if you just copy and paste my code into your app, you
-         *   should give me a shout-out/credit :)
-         *
-         * @param int $R Red
-         * @param int $G Green
-         * @param int $B Blue
-         * @return float[]
+         * @param int $r Red
+         * @param int $g Green
+         * @param int $b Blue
+         * @return array
          */
-        $RGBtoHSV = function(int $R, int $G, int $B)
+        $rgbToHSL = function(int $r, int $g, int $b): array
         {
-            // RGB values:    0-255, 0-255, 0-255
-            // HSV values:    0-360, 0-100, 0-100
+            $max = max($r, $g, $b);
+            $min = min($r, $g, $b);
+            $r /= 255; $g /= 255; $b /= 255;
+            $h = $s = $l = 0;
+            $l = ($max + $min) / 2 / 255;
 
-            // Convert the RGB byte-values to percentages
-            $R = ($R / 255);
-            $G = ($G / 255);
-            $B = ($B / 255);
+            if ($max === $min) {
+                $h = $s = 0;
+            } else {
+                $min /= 255;
+                $max /= 255;
 
-            // Calculate a few basic values, the maximum value of R,G,B, the
-            //   minimum value, and the difference of the two (chroma).
-            $maxRGB = max($R, $G, $B);
-            $minRGB = min($R, $G, $B);
-            $chroma = $maxRGB - $minRGB;
+                $d = ($max - $min);
+                $s = $l > 0.5 ? $d / (2 - $max - $min) : $d / ($max + $min);
+                switch ($max) {
+                    case $r: $h = (($g - $b) / $d + 0) * 60; break;
+                    case $g: $h = (($b - $r) / $d + 2) * 60; break;
+                    case $b: $h = (($r - $g) / $d + 4) * 60; break;
+                }
+            }
 
-            // Value (also called Brightness) is the easiest component to calculate,
-            //   and is simply the highest value among the R,G,B components.
-            // We multiply by 100 to turn the decimal into a readable percent value.
-            $computedV = 100 * $maxRGB;
-
-            // Special case if hueless (equal parts RGB make black, white, or grays)
-            // Note that Hue is technically undefined when chroma is zero, as
-            //   attempting to calculate it would cause division by zero (see
-            //   below), so most applications simply substitute a Hue of zero.
-            // Saturation will always be zero in this case, see below for details.
-            if ($chroma == 0)
-                return array(0, 0, $computedV);
-
-            // Saturation is also simple to compute, and is simply the chroma
-            //   over the Value (or Brightness)
-            // Again, multiplied by 100 to get a percentage.
-            $computedS = 100 * ($chroma / $maxRGB);
-
-            // Calculate Hue component
-            // Hue is calculated on the "chromacity plane", which is represented
-            //   as a 2D hexagon, divided into six 60-degree sectors. We calculate
-            //   the bisecting angle as a value 0 <= x < 6, that represents which
-            //   portion of which sector the line falls on.
-            if ($R == $minRGB)
-                $h = 3 - (($G - $B) / $chroma);
-            elseif ($B == $minRGB)
-                $h = 1 - (($R - $G) / $chroma);
-            else // $G == $minRGB
-                $h = 5 - (($B - $R) / $chroma);
-
-            // After we have the sector position, we multiply it by the size of
-            //   each sector's arc (60 degrees) to obtain the angle in degrees.
-            $computedH = 60 * $h;
-
-            return array($computedH, $computedS, $computedV);
+            return [$h, $s, $l];
         };
 
-        $hslArray = $RGBtoHSV($rgbColor->red, $rgbColor->green, $rgbColor->blue);
-        dd($hslArray);
+        $hslArray = $rgbToHSL($rgbColor->red, $rgbColor->green, $rgbColor->blue);
 
-        // Convert the whole percents into proper fractions.
-        $hslArray[1] /= 100.00;
-        $hslArray[2] /= 100.00;
+        /*
+         *    x AAA AAA AAA x
+         *   x AAA   A   AAA x
+         *  x A   AAA AAA   A x
+         * x AAA AAA   AAA AAA x
+         *x A   A   AAA   A   A x
+         * AAA AAA AAAAA AAA AAA x
+         * vvv vvv vvvvv vvv vvv x
+         *x v   v   vvv   v   v x
+         * x vvv vvv   vvv vvv x
+         *  x v   vvv vvv   v x
+         *   x vvv   v   vvv x
+         *    x vvv vvv vvv x
+         *     x x x x x x x
+         */
+
+        // Convert the floats into cents.
+        $hslArray[0] = (int) min(round($hslArray[0]), 359);
+        $hslArray[1] = (int) round($hslArray[1] * 100);
+        $hslArray[2] = (int) round($hslArray[2] * 100);
 
         $hslColor = new HSLColor($hslArray);
 
@@ -151,47 +134,49 @@ final class HSLSpeaker implements ColorSpeakerContract
     public function toRGB(): RGBColor
     {
         /**
-         * Taken from https://gist.github.com/vkbo/2323023.
+         * Taken from https://stackoverflow.com/a/40492904/430062 with a few mods.
          *
-         * @param int   $hue
-         * @param float $dS
-         * @param float $dV
+         * @param int $h
+         * @param int $s
+         * @param int $l
          * @return array
          */
-        $convertFromHSLToRGB = function(int $hue, float $dS, float $dV): array
+        $hslToRGB = function (int $h, int $s, int $l): array
         {
-            $dC = $dV * $dS;   // Chroma:     0.0-1.0
-            $dH = $hue / 60.0; // H-Prime:    0.0-6.0
-            $dT = $dH;         // Temp variable
+            $h /= 360.00;
+            $s /= 100.00;
+            $l /= 100.00;
 
-            while($dT >= 2.0) $dT -= 2.0;   // php modulus does not work with float
+            $hueToRGB = function ($p, $q, $t): int {
+                if ($t < 0) { $t += 1; }
+                if ($t > 1) { $t -= 1; }
+                if ($t < 1/6) { $value = $p + ($q - $p) * 6 * $t; }
+                elseif ($t < 1/2) { $value = $q; }
+                elseif ($t < 2/3) { $value = $p + ($q - $p) * (2/3 - $t) * 6; }
+                else { $value = $p; }
 
-            $dX = $dC * (1 - abs($dT - 1)); // as used in the Wikipedia link
+                return (int) round($value * 255);
+            };
 
-            switch(floor($dH)) {
-                case 0:  $dR = $dC; $dG = $dX; $dB = 0.0; break;
-                case 1:  $dR = $dX; $dG = $dC; $dB = 0.0; break;
-                case 2:  $dR = 0.0; $dG = $dC; $dB = $dX; break;
-                case 3:  $dR = 0.0; $dG = $dX; $dB = $dC; break;
-                case 4:  $dR = $dX; $dG = 0.0; $dB = $dC; break;
-                case 5:  $dR = $dC; $dG = 0.0; $dB = $dX; break;
-                default: $dR = 0.0; $dG = 0.0; $dB = 0.0; break;
+            // Achromatic.
+            if ($s === 0.0) {
+                $r = $g = $b = (int) ($l * 255);
+            } else {
+                $q = $l < 0.5 ? $l * (1 + $s) : $l + $s - $l * $s;
+                $p = 2 * $l - $q;
+                $r = $hueToRGB($p, $q, $h + 1/3);
+                $g = $hueToRGB($p, $q, $h);
+                $b = $hueToRGB($p, $q, $h - 1/3);
             }
 
-            $dM  = $dV - $dC;
-            $dR += $dM; $dG += $dM; $dB += $dM;
-            $dR *= 255; $dG *= 255; $dB *= 255;
-
-            return [min(round($dR), 255), min(round($dG), 255), min(round($dB), 255)];
+            return [$r, $g, $b];
         };
 
-        $rgbColor = new RGBColor($convertFromHSLToRGB(
+        return new RGBColor($hslToRGB(
             $this->color->hue,
             $this->color->saturation,
             $this->color->lightness
         ));
-
-        return $rgbColor;
     }
 
     public function toHexCode(): CSSHexColor

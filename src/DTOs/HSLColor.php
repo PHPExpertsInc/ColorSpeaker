@@ -20,20 +20,20 @@ namespace PHPExperts\ColorSpeaker\DTOs;
 use PHPExperts\DataTypeValidator\DataTypeValidator;
 use PHPExperts\DataTypeValidator\InvalidDataTypeException;
 use PHPExperts\DataTypeValidator\IsAFuzzyDataType;
-use PHPExperts\DataTypeValidator\IsAStrictDataType;
 use PHPExperts\SimpleDTO\SimpleDTO;
 
 /**
  * @see https://en.wikipedia.org/wiki/HSL_and_HSV
  *
- * @property-read int   $hue
- * @property-read float $saturation
- * @property-read float $lightness
+ * @property-read int $hue
+ * @property-read int $saturation
+ * @property-read int $lightness
  */
 final class HSLColor extends SimpleDTO
 {
     private const HUE_MIN = 0;
-    private const HUE_MAX = 360;
+    private const HUE_MAX = 359;
+    private const CENT_MAX = 100;
 
     /** @var DataTypeValidator */
     private $validator;
@@ -62,17 +62,12 @@ final class HSLColor extends SimpleDTO
                 $value = $input[$geometry];
                 // Strip off the '%', if it's present.
                 if (is_string($value) && substr($value, -1) === '%') {
-                    $value = substr($value, 0, -1);
-                }
-
-                if ($this->validator->isInt($value)) {
-                    $input[$geometry] = floatval($value) / 100.00;
+                    $input[$geometry] = (int) substr($value, 0, -1);
                 }
             }
         };
 
         $convertFromPercents();
-//        dd($input);
 
         parent::__construct($input, $options, $validator);
     }
@@ -81,8 +76,8 @@ final class HSLColor extends SimpleDTO
     {
         $reasons = [];
         if ($input['hue'] < self::HUE_MIN || $input['hue'] > self::HUE_MAX) {
-            $reasons[] = sprintf(
-                'HSLColor\'s Hue must be between %d and %d, not %d',
+            $reasons['hue'] = sprintf(
+                'Must be between %d and %d, not %d',
                 self::HUE_MIN,
                 self::HUE_MAX,
                 $input['hue']
@@ -90,11 +85,11 @@ final class HSLColor extends SimpleDTO
         }
 
         foreach (['saturation', 'lightness'] as $geometry) {
-            if ($input[$geometry] < 0.00 || $input[$geometry] > 1.00) {
-                $reasons[] = sprintf(
-                    "HSLColor's $geometry must be between %0.2f and %0.2f, not %0.2f",
-                    0.00,
-                    1.00,
+            if ($input[$geometry] < self::HUE_MIN || $input[$geometry] > self::CENT_MAX) {
+                $reasons[$geometry] = sprintf(
+                    'Must be between %d and %d, not %d',
+                    0,
+                    100,
                     $input[$geometry]
                 );
             }
@@ -111,8 +106,8 @@ final class HSLColor extends SimpleDTO
         return sprintf(
             'hsl(%d, %d%%, %d%%)',
             $this->hue,
-            $this->saturation * 100,
-            $this->lightness * 100
+            $this->saturation,
+            $this->lightness
         );
     }
 }
