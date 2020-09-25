@@ -1,9 +1,9 @@
 language: php
 
 php:
-  - '7.1'
   - '7.2'
   - '7.3'
+  - '7.4'
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
@@ -12,7 +12,7 @@ before_script:
   - travis_retry composer self-update
   - travis_retry composer install --no-interaction --prefer-source
 
-script: 
+script:
   # Fail the Travis CI build on the first error.
   - set -e
   - mkdir -p build/logs
