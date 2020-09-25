@@ -26,6 +26,13 @@ interface ColorSpeakerContract
 {
     public static function fromRGB(int $red, int $green, int $blue): self;
     public static function fromHexCode(string $hexColor): self;
+
+    /**
+     * @param int          $hue
+     * @param float|string $saturation Either float or "55.5%"
+     * @param float|string $lightness  Either float or "55.5%"
+     * @return static
+     */
     public static function fromHSL(int $hue, $saturation, $lightness): self;
 
     public function __toString(): string;

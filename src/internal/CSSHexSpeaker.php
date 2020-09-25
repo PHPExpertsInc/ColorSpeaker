@@ -58,6 +58,12 @@ final class CSSHexSpeaker implements ColorSpeakerContract
         return new self(new CSSHexColor($hex));
     }
 
+    /**
+     * @param int          $hue
+     * @param float|string $saturation Either float or "55.5%"
+     * @param float|string $lightness  Either float or "55.5%"
+     * @return ColorSpeakerContract
+     */
     public static function fromHSL(int $hue, $saturation, $lightness): ColorSpeakerContract
     {
         $hexColor = HSLSpeaker::fromHSL($hue, $saturation, $lightness)->toHexCode();
