@@ -1,6 +1,6 @@
 # ColorSpeaker
 
-[![Travis CI](https://travis-ci.org/phpexpertsinc/ColorSpeaker.svg?branch=master)](https://travis-ci.org/phpexpertsinc/ColorSpeaker)[![Maintainability](https://api.codeclimate.com/v1/badges/503cba0c53eb262c947a/maintainability)](https://codeclimate.com/github/phpexpertsinc/SimpleDTO/maintainability)
+[![Travis CI](https://travis-ci.com/phpexpertsinc/ColorSpeaker.svg?branch=master)](https://travis-ci.com/phpexpertsinc/ColorSpeaker)[![Maintainability](https://api.codeclimate.com/v1/badges/503cba0c53eb262c947a/maintainability)](https://codeclimate.com/github/phpexpertsinc/SimpleDTO/maintainability)
 [![Maintainability](https://api.codeclimate.com/v1/badges/1dff9e08f54516c41e4d/maintainability)](https://codeclimate.com/github/phpexpertsinc/ColorSpeaker/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/1dff9e08f54516c41e4d/test_coverage)](https://codeclimate.com/github/phpexpertsinc/ColorSpeaker/test_coverage)
 
